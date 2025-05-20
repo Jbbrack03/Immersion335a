@@ -48,4 +48,5 @@ Logic\Frame.lua
 Logic\Talkbox.lua
 Logic\Events.lua
 Logic\Inspector.lua
+Logic\Controller.lua
 Logic\Toast.lua
