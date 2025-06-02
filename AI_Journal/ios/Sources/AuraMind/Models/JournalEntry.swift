@@ -53,4 +53,15 @@ public struct JournalEntry {
         self.themes = nil
         self.mood = mood
     }
+    
+    public init(id: UUID, content: String, title: String?, timestamp: Date) {
+        self.id = id
+        self.content = content
+        self.title = title
+        self.timestamp = timestamp
+        self.sentimentScore = nil
+        self.sentimentLabel = nil
+        self.themes = nil
+        self.mood = nil
+    }
 }
