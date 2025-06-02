@@ -37,4 +37,25 @@ final class JournalEntryTests: XCTestCase {
         XCTAssertEqual(entry.sentimentLabel, sentimentLabel)
         XCTAssertNotNil(entry.id)
     }
+    
+    func testJournalEntryWithThemes() throws {
+        let content = "I'm grateful for my family and feeling blessed today."
+        let timestamp = Date()
+        let gratitudeTheme = Theme(name: "gratitude", confidence: 0.9)
+        let familyTheme = Theme(name: "family", confidence: 0.8)
+        let themes = [gratitudeTheme, familyTheme]
+        
+        let entry = JournalEntry(
+            content: content,
+            timestamp: timestamp,
+            themes: themes
+        )
+        
+        XCTAssertEqual(entry.content, content)
+        XCTAssertEqual(entry.timestamp, timestamp)
+        XCTAssertEqual(entry.themes?.count, 2)
+        XCTAssertEqual(entry.themes?[0].name, "gratitude")
+        XCTAssertEqual(entry.themes?[1].name, "family")
+        XCTAssertNotNil(entry.id)
+    }
 }
