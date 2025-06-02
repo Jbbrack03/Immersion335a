@@ -26,7 +26,8 @@ AI_Journal/
 ├── ios/                           # iOS Swift Package implementation
 │   ├── Package.swift              # Swift Package Manager configuration
 │   ├── Sources/AuraMind/          # iOS source code
-│   │   └── Models/                # Data models (JournalEntry, Theme, Mood)
+│   │   ├── Models/                # Data models (JournalEntry, Theme, Mood)
+│   │   └── Services/              # Business logic services (JournalService)
 │   └── Tests/AuraMindTests/       # XCTest test suite
 └── CLAUDE.md                      # This file
 ```
@@ -74,19 +75,19 @@ IR offset represents instruction count, not byte offset.
 Research: ARM64 encoding manual section X.Y.Z
 ```
 
-## ENHANCED TDD WORKFLOW (Updated 5/28/2025)
+## ENHANCED TDD WORKFLOW (Updated 6/2/2025)
 **NEVER deviate from this sequence:**
 
 1. **REVIEW existing codebase** - Study similar implementations and patterns
    - Look at how similar features are already implemented
    - Check documentation and architecture files
-   - Understand encoding formats and conventions
+   - Understand project conventions and patterns
 2. **RESEARCH unknowns** - Verify technical details BEFORE writing test
-   - For ARM64: Check instruction encoding documentation
-   - For IR: Review existing IR operation patterns
+   - For iOS: Check Swift/SwiftUI documentation and patterns
+   - For services: Review existing service patterns and error handling
    - Calculate expected values precisely
 3. **Write ONE test** (and only one) with CORRECT expectations
-4. **Run**: `cmake --build . && ./tests/unit_tests --gtest_filter="TestName"`
+4. **Run**: `swift test --filter "TestName"`
 5. **Verify failure** (must see compilation error or test failure)
 6. **Implement minimal code** (only what makes THIS test pass)
 7. **Run same command**, verify pass
@@ -236,10 +237,18 @@ swiftlint --strict
 5. **Analytics Engine**: Local trend analysis and visualizations
 
 ### Data Models (IMPLEMENTED)
-- ✅ `JournalEntry`: Core entity with content, sentiment, themes, mood, timestamps
+- ✅ `JournalEntry`: Core entity with content, title, sentiment, themes, mood, timestamps
 - ✅ `Mood`: Mood tracking with primary/secondary moods and intensity (0.0-1.0)
 - ✅ `Theme`: Extracted themes with name and confidence scores
 - ⏳ `SentimentAnalysis`: Score (-1.0 to 1.0), label, confidence (integrated into JournalEntry)
+
+### Services Layer (IMPLEMENTED)
+- ✅ `JournalService`: Complete CRUD operations with in-memory storage
+  - ✅ Create entries with content and optional title
+  - ✅ Update existing entries with ID preservation
+  - ✅ Delete entries with proper error handling
+  - ✅ Fetch entries with optional limit parameter
+  - ✅ Search entries with case-insensitive content/title matching
 
 ## Development Guidelines
 
@@ -263,33 +272,46 @@ swiftlint --strict
 
 ## Current Status
 
-**Project Phase**: Phase 1 Foundation - COMPLETED
-- ✅ Product Requirements Document completed
-- ✅ System Architecture Document completed  
-- ✅ Technical Requirements Document completed
-- ✅ Implementation Roadmap completed
+**Project Phase**: Phase 2 Core Features - IN PROGRESS
+- ✅ **Phase 1: Foundation - COMPLETED**
+  - ✅ Product Requirements Document completed
+  - ✅ System Architecture Document completed  
+  - ✅ Technical Requirements Document completed
+  - ✅ Implementation Roadmap completed
 - ✅ **iOS Foundation Implementation completed (TDD)**
-  - ✅ Core Data Models: JournalEntry, Theme, Mood
+  - ✅ Core Data Models: JournalEntry, Theme, Mood with title support
   - ✅ Swift Package Manager setup
-  - ✅ Test suite with 7 passing tests
-  - ✅ Strict TDD discipline maintained (4 RED-GREEN cycles)
-- ⏳ **Next: Phase 2 Core Features**
-  - ⏳ Data Persistence Layer (Core Data with encryption)
-  - ⏳ Journal Service (CRUD operations)
-  - ⏳ Basic UI Implementation
+  - ✅ Strict TDD discipline maintained (9 RED-GREEN cycles total)
+- ✅ **Phase 2: Week 5-6 Journal Engine - COMPLETED**
+  - ✅ **Journal Service (CRUD operations) - COMPLETED**
+  - ✅ Complete in-memory storage implementation
+  - ✅ All 5 core operations: Create, Read, Update, Delete, Search
+- ⏳ **Next: Phase 2 Remaining Features**
+  - ⏳ Data Persistence Layer (Core Data with encryption) - Week 7-8
+  - ⏳ Autosave functionality
+  - ⏳ Basic UI Implementation - Week 11-12
 - ⏳ AI model training pipeline not yet established
 
 ### TDD Implementation History
 **Commits demonstrating strict TDD discipline:**
+
+**Phase 1 - Data Models (4 RED-GREEN cycles):**
 1. `3614de2` - JournalEntry basic structure (RED/GREEN)
 2. `120bffc` - Sentiment analysis support (RED/GREEN) 
 3. `d21e17d` - Theme model and integration (RED/GREEN)
 4. `068b457` - Mood model and integration (RED/GREEN)
 
-**Test Coverage**: 7/7 tests passing
+**Phase 2 - Journal Service (5 RED-GREEN cycles):**
+5. `8d07523` - JournalService createEntry with title support (RED/GREEN)
+6. `5507b23` - JournalService updateEntry with ID preservation (RED/GREEN)
+7. `786fe3e` - JournalService deleteEntry with error handling (RED/GREEN)
+8. `d370276` - JournalService fetchEntries and searchEntries (RED/GREEN)
+
+**Test Coverage**: 12/12 tests passing (100% success rate)
 - JournalEntryTests: 4 tests (creation, sentiment, themes, mood)
 - ThemeTests: 1 test (creation)
 - MoodTests: 2 tests (basic creation, secondary moods)
+- **JournalServiceTests: 5 tests (create, read, update, delete, search)**
 
 ## Important Considerations for AI Development
 
@@ -310,18 +332,21 @@ Note: Model training infrastructure is not yet implemented.
 
 ## Next Steps for Implementation
 
-**IMMEDIATE - Phase 2: Core Features (Week 5-12 per roadmap)**
+**IMMEDIATE - Phase 2: Core Features (Week 7-12 per roadmap)**
 
 1. **Data Persistence Layer** (Week 7-8)
    - ✅ Core data models completed
+   - ✅ Journal Service CRUD operations completed
    - ⏳ Core Data setup with encryption (FileProtection.complete)
    - ⏳ Repository pattern implementation
    - ⏳ Data migration strategy
+   - ⏳ Replace in-memory storage with Core Data persistence
 
-2. **Journal Service** (Week 5-6) 
-   - ⏳ Journal CRUD operations with TDD
-   - ⏳ Autosave functionality
-   - ⏳ Search functionality
+2. **Autosave & Advanced Features** (Week 9-10)
+   - ⏳ Autosave functionality with timer-based persistence
+   - ⏳ Date range filtering for fetchEntries
+   - ⏳ Entry sorting by timestamp
+   - ⏳ Backup/restore functionality
 
 3. **Basic UI Implementation** (Week 11-12)
    - ⏳ SwiftUI views following MVVM-C pattern
