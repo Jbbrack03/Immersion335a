@@ -29,8 +29,16 @@ public class JournalService {
         entries[id] = updatedEntry
         return updatedEntry
     }
+    
+    public func deleteEntry(id: UUID) throws {
+        guard entries[id] != nil else {
+            throw JournalServiceError.entryNotFound
+        }
+        
+        entries.removeValue(forKey: id)
+    }
 }
 
-public enum JournalServiceError: Error {
+public enum JournalServiceError: Error, Equatable {
     case entryNotFound
 }

@@ -34,4 +34,19 @@ final class JournalServiceTests: XCTestCase {
         XCTAssertEqual(updatedEntry.title, updatedTitle)
         XCTAssertNotNil(updatedEntry.timestamp)
     }
+    
+    func testDeleteEntry() throws {
+        let service = JournalService()
+        let content = "This entry will be deleted."
+        let title = "Temporary Entry"
+        
+        let entry = try service.createEntry(content: content, title: title)
+        
+        try service.deleteEntry(id: entry.id)
+        
+        XCTAssertThrowsError(try service.updateEntry(id: entry.id, content: "Updated", title: "Updated")) { error in
+            XCTAssertTrue(error is JournalServiceError)
+            XCTAssertEqual(error as? JournalServiceError, .entryNotFound)
+        }
+    }
 }
