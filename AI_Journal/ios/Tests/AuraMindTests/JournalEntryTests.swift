@@ -58,4 +58,28 @@ final class JournalEntryTests: XCTestCase {
         XCTAssertEqual(entry.themes?[1].name, "family")
         XCTAssertNotNil(entry.id)
     }
+    
+    func testJournalEntryWithMood() throws {
+        let content = "Had an amazing day at the beach!"
+        let timestamp = Date()
+        let mood = Mood(
+            primaryMood: "joyful",
+            secondaryMoods: ["relaxed", "energized"],
+            intensity: 0.9,
+            timestamp: timestamp
+        )
+        
+        let entry = JournalEntry(
+            content: content,
+            timestamp: timestamp,
+            mood: mood
+        )
+        
+        XCTAssertEqual(entry.content, content)
+        XCTAssertEqual(entry.timestamp, timestamp)
+        XCTAssertEqual(entry.mood?.primaryMood, "joyful")
+        XCTAssertEqual(entry.mood?.intensity, 0.9)
+        XCTAssertEqual(entry.mood?.secondaryMoods?.count, 2)
+        XCTAssertNotNil(entry.id)
+    }
 }

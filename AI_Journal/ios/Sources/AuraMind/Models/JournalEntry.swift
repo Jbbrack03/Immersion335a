@@ -7,6 +7,7 @@ public struct JournalEntry {
     public let sentimentScore: Double?
     public let sentimentLabel: String?
     public let themes: [Theme]?
+    public let mood: Mood?
     
     public init(content: String, timestamp: Date) {
         self.id = UUID()
@@ -15,6 +16,7 @@ public struct JournalEntry {
         self.sentimentScore = nil
         self.sentimentLabel = nil
         self.themes = nil
+        self.mood = nil
     }
     
     public init(content: String, timestamp: Date, sentimentScore: Double, sentimentLabel: String) {
@@ -24,6 +26,7 @@ public struct JournalEntry {
         self.sentimentScore = sentimentScore
         self.sentimentLabel = sentimentLabel
         self.themes = nil
+        self.mood = nil
     }
     
     public init(content: String, timestamp: Date, themes: [Theme]) {
@@ -33,5 +36,16 @@ public struct JournalEntry {
         self.sentimentScore = nil
         self.sentimentLabel = nil
         self.themes = themes
+        self.mood = nil
+    }
+    
+    public init(content: String, timestamp: Date, mood: Mood) {
+        self.id = UUID()
+        self.content = content
+        self.timestamp = timestamp
+        self.sentimentScore = nil
+        self.sentimentLabel = nil
+        self.themes = nil
+        self.mood = mood
     }
 }
