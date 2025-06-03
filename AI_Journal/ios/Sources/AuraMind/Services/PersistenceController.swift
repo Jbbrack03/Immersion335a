@@ -7,7 +7,38 @@ public class PersistenceController {
     public let container: NSPersistentContainer
     
     init() {
+        // Create model programmatically for now
         let model = NSManagedObjectModel()
+        
+        // Create JournalEntryEntity
+        let journalEntity = NSEntityDescription()
+        journalEntity.name = "JournalEntryEntity"
+        journalEntity.managedObjectClassName = "JournalEntryEntity"
+        
+        // Add attributes
+        let idAttribute = NSAttributeDescription()
+        idAttribute.name = "id"
+        idAttribute.attributeType = .UUIDAttributeType
+        idAttribute.isOptional = false
+        
+        let contentAttribute = NSAttributeDescription()
+        contentAttribute.name = "content"
+        contentAttribute.attributeType = .stringAttributeType
+        contentAttribute.isOptional = false
+        
+        let titleAttribute = NSAttributeDescription()
+        titleAttribute.name = "title"
+        titleAttribute.attributeType = .stringAttributeType
+        titleAttribute.isOptional = true
+        
+        let timestampAttribute = NSAttributeDescription()
+        timestampAttribute.name = "timestamp"
+        timestampAttribute.attributeType = .dateAttributeType
+        timestampAttribute.isOptional = false
+        
+        journalEntity.properties = [idAttribute, contentAttribute, titleAttribute, timestampAttribute]
+        model.entities = [journalEntity]
+        
         container = NSPersistentContainer(name: "AuraMind", managedObjectModel: model)
         
         configureStoreDescription()
