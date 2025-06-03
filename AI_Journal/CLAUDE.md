@@ -97,6 +97,29 @@ Research: ARM64 encoding manual section X.Y.Z
 **CRITICAL**: Each test is a complete story that deserves individual attention, not a step in a batch process.
 **NEW EMPHASIS**: The REVIEW and RESEARCH steps prevent TEST IMMUTABILITY violations by ensuring test expectations are correct from the start.
 
+## CRITICAL TDD LESSON (Added 6/2/2025)
+**Tests MUST drive the correct architecture**, not just make tests pass:
+
+❌ **WRONG**: Writing tests that can be satisfied with fake implementations
+```swift
+// Bad: This test can be satisfied without Core Data
+func testFetchAll() {
+    let entries = repository.fetchAll()
+    XCTAssertEqual(entries.count, 1)
+}
+```
+
+✅ **CORRECT**: Writing tests that force proper implementation
+```swift
+// Good: This test forces actual Core Data usage
+func testPersistsToCoreData() {
+    repository.create(entry)
+    let request = NSFetchRequest<NSManagedObject>(entityName: "JournalEntry")
+    let results = try context.fetch(request)
+    XCTAssertEqual(results.count, 1)
+}
+```
+
 ## CORE TDD RULES
 
 1. **RED-GREEN-REFACTOR ONLY**
@@ -281,14 +304,21 @@ swiftlint --strict
 - ✅ **iOS Foundation Implementation completed (TDD)**
   - ✅ Core Data Models: JournalEntry, Theme, Mood with title support
   - ✅ Swift Package Manager setup
-  - ✅ Strict TDD discipline maintained (9 RED-GREEN cycles total)
+  - ✅ Strict TDD discipline maintained (12 RED-GREEN cycles total)
 - ✅ **Phase 2: Week 5-6 Journal Engine - COMPLETED**
   - ✅ **Journal Service (CRUD operations) - COMPLETED**
   - ✅ Complete in-memory storage implementation
   - ✅ All 5 core operations: Create, Read, Update, Delete, Search
+- 🚧 **Phase 2: Week 7-8 Data Persistence Layer - IN PROGRESS**
+  - ✅ Core Data setup with FileProtection.complete encryption
+  - ✅ PersistenceController with programmatic model creation
+  - ✅ CoreDataJournalRepository with actual Core Data persistence
+  - ✅ TDD violation corrected - tests now force proper architecture
+  - ⏳ Repository update, delete, and search methods
+  - ⏳ Integration with JournalService
+  - ⏳ Data migration strategy
 - ⏳ **Next: Phase 2 Remaining Features**
-  - ⏳ Data Persistence Layer (Core Data with encryption) - Week 7-8
-  - ⏳ Autosave functionality
+  - ⏳ Autosave functionality - Week 9-10
   - ⏳ Basic UI Implementation - Week 11-12
 - ⏳ AI model training pipeline not yet established
 
@@ -307,11 +337,19 @@ swiftlint --strict
 7. `786fe3e` - JournalService deleteEntry with error handling (RED/GREEN)
 8. `d370276` - JournalService fetchEntries and searchEntries (RED/GREEN)
 
-**Test Coverage**: 12/12 tests passing (100% success rate)
+**Phase 2 - Data Persistence Layer (3 RED-GREEN cycles):**
+9. `cd39093` - PersistenceController with FileProtection.complete (RED/GREEN)
+10. `1e142d7` - CoreDataJournalRepository create method (RED/GREEN)
+11. `5dfbbd8` - CoreDataJournalRepository fetchAll method (RED/GREEN)
+12. `0fbb4aa` - **TDD Correction**: Fix to use actual Core Data persistence (RED/GREEN)
+
+**Test Coverage**: 15/15 tests passing (100% success rate)
 - JournalEntryTests: 4 tests (creation, sentiment, themes, mood)
 - ThemeTests: 1 test (creation)
 - MoodTests: 2 tests (basic creation, secondary moods)
-- **JournalServiceTests: 5 tests (create, read, update, delete, search)**
+- JournalServiceTests: 5 tests (create, read, update, delete, search)
+- PersistenceControllerTests: 1 test (initialization with encryption)
+- **CoreDataJournalRepositoryTests: 2 tests (create with Core Data verification)**
 
 ## Important Considerations for AI Development
 
@@ -334,13 +372,18 @@ Note: Model training infrastructure is not yet implemented.
 
 **IMMEDIATE - Phase 2: Core Features (Week 7-12 per roadmap)**
 
-1. **Data Persistence Layer** (Week 7-8)
+1. **Data Persistence Layer** (Week 7-8) - IN PROGRESS
    - ✅ Core data models completed
-   - ✅ Journal Service CRUD operations completed
-   - ⏳ Core Data setup with encryption (FileProtection.complete)
-   - ⏳ Repository pattern implementation
+   - ✅ Journal Service CRUD operations completed  
+   - ✅ Core Data setup with encryption (FileProtection.complete)
+   - ✅ Repository pattern implementation (create, fetchAll)
+   - ✅ Actual Core Data persistence (TDD compliance restored)
+   - ⏳ Repository update method with Core Data
+   - ⏳ Repository delete method with Core Data
+   - ⏳ Repository search with NSPredicate
+   - ⏳ Integration of CoreDataJournalRepository with JournalService
    - ⏳ Data migration strategy
-   - ⏳ Replace in-memory storage with Core Data persistence
+   - ⏳ Repository isolation tests
 
 2. **Autosave & Advanced Features** (Week 9-10)
    - ⏳ Autosave functionality with timer-based persistence
@@ -359,6 +402,16 @@ Note: Model training infrastructure is not yet implemented.
 5. Integrate Core ML for on-device processing
 6. Build sentiment analysis and theme extraction
 7. Implement comprehensive UI testing strategy
+
+## TDD Next Test Priorities
+
+Following strict TDD principles, the next failing tests should be:
+
+1. **testUpdateJournalEntryPersistsToCoreData** - Force Core Data update implementation
+2. **testDeleteJournalEntryRemovesFromCoreData** - Force Core Data delete implementation  
+3. **testSearchJournalEntriesWithPredicate** - Force NSPredicate-based search
+4. **testRepositoryIsolation** - Ensure different contexts maintain separate data
+5. **testJournalServiceWithCoreDataRepository** - Integration test
 
 ## Code Quality Standards
 
